@@ -70,8 +70,8 @@ end
 local function drawLine()
 	local x = math.floor(buffer.getWidth() / 2)
 	for i = 1, lineHeight do
-		buffer.text(x + 1, i, config.colors.lineShadow, "▎")
-		buffer.text(x, i, config.colors.line, "▍")
+		buffer.drawText(x + 1, i, config.colors.lineShadow, "▎")
+		buffer.drawText(x, i, config.colors.line, "▍")
 	end
 end
 
@@ -84,7 +84,8 @@ local function drawLeftArrow(x, y, color)
 		{ {bg, fg, " "}, {bg, fg, "*"}, {bg, fg, " "} },
 		{ {bg, fg, " "}, {bg, fg, " "}, {bg, fg, "*"} },
 	}
-	buffer.customImage(x, y, arrow)
+	buffer.customImage(x, y, arrow) ---OLD
+	---buffer.drawImage(x, y, arrow) ---NEW
 end
 
 local function drawRightArrow(x, y, color)
@@ -96,7 +97,8 @@ local function drawRightArrow(x, y, color)
 		{ {bg, fg, " "}, {bg, fg, "*"}, {bg, fg, " "} },
 		{ {bg, fg, "*"}, {bg, fg, " "}, {bg, fg, " "} },
 	}
-	buffer.customImage(x, y, arrow)
+	buffer.customImage(x, y, arrow) ---OLD
+	---buffer.drawImage(x, y, arrow) ---NEW
 end
 
 local function drawMenu()
@@ -159,13 +161,15 @@ local function drawAll()
 		radioStations.currentStation = #radioStations
 	end
 
-	buffer.square(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ")
+	buffer.square(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ") --- OLD
+	--buffer.clear(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ") --- NEW
 
 	drawStations()
 	drawLine()
 	drawMenu()
 
-	buffer.draw()
+	--buffer.draw() ---OLD
+	buffer.drawChanges(); ---NEW
 end
 
 local function saveStations()
@@ -228,25 +232,29 @@ while true do
 		if e[5] == 0 then
 			if ecs.clickedAtArea(e[3], e[4], obj.strelkaVlevo[1], obj.strelkaVlevo[2], obj.strelkaVlevo[3], obj.strelkaVlevo[4]) then
 				drawLeftArrow(obj.strelkaVlevo[1], obj.strelkaVlevo[2], config.colors.bottomToolBarCurrentColor)
-				buffer.draw()
+				--buffer.draw() ---OLD
+				buffer.drawChanges() ---NEW
 				os.sleep(0.2)
 				switchStation(-1)
 				drawAll()
 			elseif ecs.clickedAtArea(e[3], e[4], obj.strelkaVpravo[1], obj.strelkaVpravo[2], obj.strelkaVpravo[3], obj.strelkaVpravo[4]) then
 				drawRightArrow(obj.strelkaVpravo[1], obj.strelkaVpravo[2], config.colors.bottomToolBarCurrentColor)
-				buffer.draw()
+				--buffer.draw() ---OLD
+				buffer.drawChanges() ---NEW
 				os.sleep(0.2)
 				switchStation(1)
 				drawAll()
 			elseif ecs.clickedAtArea(e[3], e[4], obj.gromkostPlus[1], obj.gromkostPlus[2], obj.gromkostPlus[3], obj.gromkostPlus[4]) then
 				bigLetters.drawText(obj.gromkostPlus[1], obj.gromkostPlus[2], config.colors.bottomToolBarCurrentColor, "+", "*" )
-				buffer.draw()
+				--buffer.draw() ---OLD 
+				buffer.drawChanges() ---NEW
 				volume(1)
 				os.sleep(0.2)
 				drawAll()
 			elseif ecs.clickedAtArea(e[3], e[4], obj.gromkostMinus[1], obj.gromkostMinus[2], obj.gromkostMinus[3], obj.gromkostMinus[4]) then
 				bigLetters.drawText(obj.gromkostMinus[1], obj.gromkostMinus[2], config.colors.bottomToolBarCurrentColor, "-", "*" )
-				buffer.draw()
+				--buffer.draw() --- OLD
+				buffer.drawChanges() ---NEW
 				volume(-1)
 				os.sleep(0.2)
 				drawAll()
@@ -292,8 +300,10 @@ while true do
 					{"Button", {ecs.colors.orange, 0xffffff, "OK"}}
 				)
 			elseif action == "Выход" then
-				buffer.square(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ")
-				buffer.draw()
+				buffer.square(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ") ---OLD
+				---buffer.clear(1, 1, buffer.getWidth(), buffer.getHeight(), config.colors.background, 0xFFFFFF, " ") ---NEW
+				--buffer.draw() ---OLD
+				buffer.drawChanges() ---NEW
 				ecs.prepareToExit()
 				radio.stop()
 				return
@@ -305,10 +315,3 @@ while true do
 		drawAll()
 	end
 end
-
-
-
-
-
-
-
